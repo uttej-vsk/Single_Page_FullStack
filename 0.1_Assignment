@@ -1,11 +1,11 @@
 ```mermaid
-    sequenceDiagram
-    box grey Client Side
-    participant Browser
-    end
-    box Maroon Server Side
-    participant Server
-    end
+sequenceDiagram
+box grey Client Side
+participant Browser
+end
+box Maroon Server Side
+participant Server
+end
 
     Browser->>Server: GET https://studies.cs.helsinki.fi/exampleapp/notes
     activate Server
