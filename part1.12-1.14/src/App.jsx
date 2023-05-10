@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState } from "../../part1.6-1.11/node_modules/@types/react";
 
 
 const Button = ({ handleClick, text }) => {
