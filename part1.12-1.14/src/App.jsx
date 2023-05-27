@@ -22,7 +22,6 @@ const App = () => {
 
   const randomAnectode = () => {
     const rand = getRandomAnecdote();
-    console.log(rand)
     const selectedAnecdote = saveVote.find(vote => vote.id === rand)
 
     if (selectedAnecdote) {
@@ -47,7 +46,6 @@ const App = () => {
     } else {
       setSaveVote([...saveVote, { id: selected, vote: 1 }]);
     }
-
     setVote(vote + 1);
   };
 
@@ -77,8 +75,6 @@ const App = () => {
       <p>Votes: {vote}</p>
       <button onClick={randomAnectode}>Next Anecdote</button>
       <button onClick={voteAnectode}>Vote</button>
-
-
       {anecdoteWithHighestVotes && (
         <p>
           {anecdoteWithHighestVotes.anecdote}
