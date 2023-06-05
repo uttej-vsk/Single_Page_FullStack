@@ -3,7 +3,7 @@
     {
       "id": 1,
       "content": "HTML is easy",
-      "important": false
+      "important": true
     },
     {
       "id": 2,
@@ -49,6 +49,11 @@
       "content": "d",
       "important": false,
       "id": 10
+    },
+    {
+      "content": "Thanks",
+      "important": false,
+      "id": 11
     }
   ]
 }
