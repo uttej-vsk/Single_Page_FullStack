@@ -1,9 +1,19 @@
-import React from 'react';
+import React from "react";
 
-function Persons({ persons, searchInput }) {
+function Persons({
+  persons,
+  searchInput,
+  handleDeleteContact,
+}) {
   const filteredContacts = persons.filter((person) =>
-    person.name.toLowerCase().includes(searchInput.toLowerCase())
+    person.name
+      .toLowerCase()
+      .includes(searchInput.toLowerCase())
   );
+
+  const handleDelete = (id) => {
+    handleDeleteContact(id);
+  };
 
   return (
     <div>
@@ -11,6 +21,10 @@ function Persons({ persons, searchInput }) {
         <div key={person.id}>
           <div>
             {person.name} {person.number}
+            {"  "}
+            <button onClick={() => handleDelete(person.id)}>
+              delete
+            </button>
           </div>
         </div>
       ))}
