@@ -3,13 +3,17 @@ import Filter from "./components/Filter";
 import PersonForm from "./components/PersonForm";
 import Persons from "./components/Persons";
 import phonebook from "./services/phonebook";
+import Notification from "./components/Notification";
 
-const App = () => {
+function App() {
   const [persons, setPersons] = useState([]);
 
   const [newName, setNewName] = useState("");
   const [newPhoneNumber, setNewPhoneNumber] = useState("");
   const [searchInput, setSearchInput] = useState("");
+  const [successMessage, setSuccessMessage] =
+    useState(null);
+  const [errorMessage, setErrorMessage] = useState(null);
 
   useEffect(() => {
     console.log("Fetching data from Server..");
@@ -37,8 +41,7 @@ const App = () => {
 
       setNewName("");
       setNewPhoneNumber("");
-
-      return; // Exit the function without adding the duplicate entry
+      return;
     }
 
     phonebook
@@ -47,21 +50,40 @@ const App = () => {
         setPersons([...persons, responsePerson]);
         setNewName("");
         setNewPhoneNumber("");
+        setSuccessMessage("Contact Added Successfully");
+        setTimeout(() => {
+          setSuccessMessage(null);
+        }, 3000);
       });
   };
 
   const handleDeleteContact = (id) => {
-    phonebook.del(id).then(() => {
-      const updatedPersons = persons.filter(
-        (person) => person.id !== id
-      );
-      setPersons(updatedPersons);
-    });
+    console.log(id);
+    phonebook
+      .del(id)
+      .then(() => {
+        const updatedPersons = persons.filter(
+          (person) => person.id !== id
+        );
+        setPersons(updatedPersons);
+      })
+      .catch((error) => {
+        const deletedContact = persons.find(
+          (person) => person.id === id
+        );
+        setErrorMessage(
+          `${deletedContact.name} is already deleted in the server`
+        );
+        setTimeout(() => {
+          setErrorMessage(null);
+        }, 3000);
+      });
   };
 
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification message={errorMessage} />
 
       <Filter
         searchInput={searchInput}
@@ -85,6 +107,6 @@ const App = () => {
       />
     </div>
   );
-};
+}
 
 export default App;

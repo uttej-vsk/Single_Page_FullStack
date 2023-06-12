@@ -20,10 +20,9 @@ function Persons({
       {filteredContacts.map((person) => (
         <div key={person.id}>
           <div>
-            {person.name} {person.number}
-            {"  "}
+            {person.name} {person.number}{" "}
             <button onClick={() => handleDelete(person.id)}>
-              delete
+              Delete
             </button>
           </div>
         </div>
