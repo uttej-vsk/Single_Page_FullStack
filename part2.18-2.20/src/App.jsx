@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import Filter from "./components/Filter";
 import phonebook from "./services/phonebook.jsx";
+import weatherData from "./services/weatherData.jsx";
 import Country from "./components/Country";
 
 function App() {
