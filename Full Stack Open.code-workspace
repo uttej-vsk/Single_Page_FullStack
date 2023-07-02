@@ -1,0 +1,18 @@
+{
+	"folders": [
+		{
+			"path": "part2.11"
+		},
+		{
+			"path": "part2work"
+		}
+	],
+	"settings": {
+		"editor.formatOnSave": true,
+		"prettier.bracketSpacing": true,
+		"prettier.printWidth": 80,
+		"prettier.tabWidth": 3,
+		"prettier.bracketSameLine": false,
+		"editor.fontLigatures": false
+	}
+}

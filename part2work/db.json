@@ -1,0 +1,74 @@
+{
+  "notes": [
+    {
+      "id": 1,
+      "content": "HTML is easy",
+      "important": false
+    },
+    {
+      "id": 2,
+      "content": "Browser can execute only JavaScript",
+      "important": false
+    },
+    {
+      "id": 3,
+      "content": "GET and POST are the most important methods of HTTP protocol",
+      "important": false
+    },
+    {
+      "content": "Now learning REST APIs",
+      "important": false,
+      "id": 4
+    },
+    {
+      "content": "Now learning REST APIs",
+      "important": false,
+      "id": 5
+    },
+    {
+      "content": "hello",
+      "important": false,
+      "id": 6
+    },
+    {
+      "content": "React is king",
+      "important": false,
+      "id": 7
+    },
+    {
+      "content": "React is king",
+      "important": false,
+      "id": 8
+    },
+    {
+      "content": "de",
+      "important": false,
+      "id": 9
+    },
+    {
+      "content": "d",
+      "important": false,
+      "id": 10
+    },
+    {
+      "content": "Thanks",
+      "important": false,
+      "id": 11
+    },
+    {
+      "content": "",
+      "important": false,
+      "id": 12
+    },
+    {
+      "content": "",
+      "important": false,
+      "id": 13
+    },
+    {
+      "content": "HTML is Easy",
+      "important": true,
+      "id": 14
+    }
+  ]
+}
