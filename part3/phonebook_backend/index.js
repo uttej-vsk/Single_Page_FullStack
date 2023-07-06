@@ -3,6 +3,8 @@ const morgan = require("morgan");
 const cors = require("cors");
 
 const app = express();
+app.use(cors());
+app.use(express.static("dist"));
 
 const requestLogger = morgan(function (tokens, request, response) {
   return [
@@ -21,8 +23,6 @@ const unknownEndPoint = (request, response) => {
   response.status(404).send({ error: "unknown endpoint" });
 };
 
-app.use(cors());
-app.use(express.static("dist"));
 app.use(express.json());
 app.use(requestLogger);
 
