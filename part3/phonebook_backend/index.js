@@ -22,9 +22,9 @@ const unknownEndPoint = (request, response) => {
 };
 
 app.use(cors());
+app.use(express.static("dist"));
 app.use(express.json());
 app.use(requestLogger);
-app.use(express.static("dist/assets/index-5b17affa.js"));
 
 let persons = [
   {
