@@ -1,43 +1,42 @@
-const express = require("express");
-const morgan = require("morgan");
-const cors = require("cors");
-require("dotenv").config();
+const express = require('express');
+const morgan = require('morgan');
+const cors = require('cors');
+require('dotenv').config();
 
-const Person = require("./models/person");
+const Person = require('./models/person');
 
-const requestLogger = morgan(function (tokens, request, response) {
-  return [
-    tokens.method(request, response),
-    tokens.url(request, response),
-    tokens.status(request, response),
-    tokens.res(request, response, "content-length"),
-    "-",
-    tokens["response-time"](request, response),
-    "ms",
-    JSON.stringify(request.body),
-  ].join(" ");
-});
+const requestLogger = morgan((tokens, request, response) => [
+  tokens.method(request, response),
+  tokens.url(request, response),
+  tokens.status(request, response),
+  tokens.res(request, response, 'content-length'),
+  '-',
+  tokens['response-time'](request, response),
+  'ms',
+  JSON.stringify(request.body),
+].join(' '));
 
 const app = express();
 app.use(cors());
-app.use(express.static("dist"));
+app.use(express.static('dist'));
 app.use(express.json());
 
 app.use(requestLogger);
 
-let persons = [];
+const persons = [];
 
 // Define API route for getting all persons
-app.get("/api/persons", (request, response) => {
-  Person.find({}).then((persons) => {
-    response.json(persons);
+app.get('/api/persons', (request, response) => {
+  Person.find({}).then((person) => {
+    response.json(person);
   });
 });
 
 // Define API route for getting a single person by ID
-app.get("/api/persons/:id", (request, response, next) => {
+app.get('/api/persons/:id', (request, response, next) => {
   Person.findById(request.params.id)
     .then((person) => {
+      // eslint-disable-next-line no-unused-expressions
       person ? response.json(person) : response.status(404).end();
     })
     .catch((error) => next(error));
@@ -45,18 +44,18 @@ app.get("/api/persons/:id", (request, response, next) => {
 
 // Define info route for finding record length
 
-app.get("/info", (request, response, next) => {
+app.get('/info', (request, response, next) => {
   Person.countDocuments({})
     .then((count) => {
-      const currentTime = new Date().toLocaleString("en-US", {
-        weekday: "short",
-        month: "short",
-        day: "numeric",
-        year: "numeric",
-        hour: "numeric",
-        minute: "numeric",
-        second: "numeric",
-        timeZoneName: "short",
+      const currentTime = new Date().toLocaleString('en-US', {
+        weekday: 'short',
+        month: 'short',
+        day: 'numeric',
+        year: 'numeric',
+        hour: 'numeric',
+        minute: 'numeric',
+        second: 'numeric',
+        timeZoneName: 'short',
       });
 
       const htmlResponse = `<h3>This phonebook has info for ${count} people</h3><p>${currentTime}</p>`;
@@ -66,15 +65,15 @@ app.get("/info", (request, response, next) => {
 });
 
 // Define delete route for removing a person by ID
-app.delete("/api/persons/:id", (request, response, next) => {
+app.delete('/api/persons/:id', (request, response, next) => {
   Person.findByIdAndRemove(request.params.id)
-    .then((result) => {
+    .then(() => {
       response.status(204).end();
     })
     .catch((error) => next(error));
 });
 
-app.put("/api/persons/:id", (request, response, next) => {
+app.put('/api/persons/:id', (request, response, next) => {
   const { name, number } = request.body;
 
   const person = {
@@ -85,7 +84,7 @@ app.put("/api/persons/:id", (request, response, next) => {
   Person.findByIdAndUpdate(request.params.id, person, {
     new: true,
     runValidators: true,
-    context: "query",
+    context: 'query',
   })
     .exec()
     .then((updatedPerson) => {
@@ -95,23 +94,23 @@ app.put("/api/persons/:id", (request, response, next) => {
 });
 
 // Define post route for adding a new person
-app.post("/api/persons/", (request, response, next) => {
+app.post('/api/persons/', (request, response, next) => {
   const { name, number } = request.body;
 
   if (!name || !number || undefined) {
     response.status(400).json({
-      error: "Name & Number are mandatory",
+      error: 'Name & Number are mandatory',
     });
     return;
   }
 
   const existingPerson = persons.find(
-    (person) => person.name === name
+    (person) => person.name === name,
   );
 
   if (existingPerson) {
     response.status(400).json({
-      error: "name must be unique",
+      error: 'name must be unique',
     });
     return;
   }
@@ -129,21 +128,18 @@ app.post("/api/persons/", (request, response, next) => {
 });
 
 const unknownEndPoint = (request, response) => {
-  response.status(404).send({ error: "unknown endpoint" });
+  response.status(404).send({ error: 'unknown endpoint' });
 };
 app.use(unknownEndPoint);
 
-//Define error handler middleware
+// Define error handler middleware
 
 const errorHandler = (error, request, response, next) => {
-  console.log(error.message);
-  console.error(error.stack);
-
-  if (error.name === "CastError") {
-    return response.status(400).send({ error: "malformatted id" });
+  if (error.name === 'CastError') {
+    return response.status(400).send({ error: 'malformatted id' });
   }
 
-  if (error.name === "ValidationError") {
+  if (error.name === 'ValidationError') {
     // Mongoose validation error
     const errorMessage = error.message;
     return response.status(400).send({ error: errorMessage });
@@ -151,10 +147,11 @@ const errorHandler = (error, request, response, next) => {
 
   next(error);
 };
+
 app.use(errorHandler);
 
-//Connecting to the port
-const PORT = process.env.PORT;
+// Connecting to the port
+const { PORT } = process.env;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
