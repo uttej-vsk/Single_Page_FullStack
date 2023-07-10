@@ -52,17 +52,31 @@ function App() {
           setTimeout(() => {
             setSuccessMessage(null);
           }, 3000);
+        })
+        .catch((error) => {
+          setErrorMessage(error.response.data.error);
+          setTimeout(() => {
+            setErrorMessage(null);
+          }, 3000);
         });
     } else {
-      phonebook.create(newPersonObj).then((responsePerson) => {
-        setPersons([...persons, responsePerson]);
-        setNewName("");
-        setNewPhoneNumber("");
-        setSuccessMessage("Contact Added Successfully");
-        setTimeout(() => {
-          setSuccessMessage(null);
-        }, 3000);
-      });
+      phonebook
+        .create(newPersonObj)
+        .then((responsePerson) => {
+          setPersons([...persons, responsePerson]);
+          setNewName("");
+          setNewPhoneNumber("");
+          setSuccessMessage("Contact Added Successfully");
+          setTimeout(() => {
+            setSuccessMessage(null);
+          }, 3000);
+        })
+        .catch((error) => {
+          setErrorMessage(error.response.data.error);
+          setTimeout(() => {
+            setErrorMessage(null);
+          }, 3000);
+        });
     }
   };
 
