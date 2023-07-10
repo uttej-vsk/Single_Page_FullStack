@@ -29,27 +29,41 @@ function App() {
       number: newPhoneNumber,
     };
 
-    const nameExists = persons.some(
+    const existingPerson = persons.find(
       (person) => person.name === newPersonObj.name
     );
 
-    if (nameExists) {
-      alert(`${newPersonObj.name} is already added to the phonebook`);
+    if (existingPerson) {
+      const updatedPersonObj = {
+        ...newPersonObj,
+        id: existingPerson.id,
+      };
 
-      setNewName("");
-      setNewPhoneNumber("");
-      return;
+      phonebook
+        .update(existingPerson.id, updatedPersonObj)
+        .then((responsePerson) => {
+          const updatedPersons = persons.map((person) =>
+            person.id === existingPerson.id ? responsePerson : person
+          );
+          setPersons(updatedPersons);
+          setNewName("");
+          setNewPhoneNumber("");
+          setSuccessMessage("Contact updated successfully");
+          setTimeout(() => {
+            setSuccessMessage(null);
+          }, 3000);
+        });
+    } else {
+      phonebook.create(newPersonObj).then((responsePerson) => {
+        setPersons([...persons, responsePerson]);
+        setNewName("");
+        setNewPhoneNumber("");
+        setSuccessMessage("Contact Added Successfully");
+        setTimeout(() => {
+          setSuccessMessage(null);
+        }, 3000);
+      });
     }
-
-    phonebook.create(newPersonObj).then((responsePerson) => {
-      setPersons([...persons, responsePerson]);
-      setNewName("");
-      setNewPhoneNumber("");
-      setSuccessMessage("Contact Added Successfully");
-      setTimeout(() => {
-        setSuccessMessage(null);
-      }, 3000);
-    });
   };
 
   const handleDeleteContact = (id) => {
