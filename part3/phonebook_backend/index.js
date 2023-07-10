@@ -134,7 +134,7 @@ const unknownEndPoint = (request, response) => {
 app.use(unknownEndPoint);
 
 //Define error handler middleware
-// Define error handler middleware
+
 const errorHandler = (error, request, response, next) => {
   console.log(error.message);
   console.error(error.stack);

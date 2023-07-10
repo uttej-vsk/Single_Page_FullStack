@@ -16,20 +16,21 @@ mongoose
   });
 
 const phonebookSchema = new mongoose.Schema({
-  //_id: mongoose.Types.ObjectId,
   name: {
     type: String,
-    required: true,
+    required: [true, "Contact name is required"],
     minLength: 3,
   },
   number: {
     type: String,
+    minLength: 10,
     validate: {
-      validator: function (v) {
-        return /\d{3}-\d{3}-\d{4}/.test(v);
+      validator: function (value) {
+        return /^(09-\d{8}|\d{3}[-\s]?\d{3}[-\s]?\d{4}|\d{10})$/.test(
+          value
+        );
       },
-      message: (props) =>
-        `${props.value} must be a 10 digit phone number!`,
+      message: (props) => `not a valid phone number ${props.value}`,
     },
     required: [true, "User phone number required"],
   },
@@ -59,4 +60,6 @@ phonebookSchema.set("toJSON", {
 // });
 //const person = new Person({ persons });
 
-module.exports = mongoose.model("Person", phonebookSchema);
+const Person = mongoose.model("Person", phonebookSchema);
+
+module.exports = Person;
