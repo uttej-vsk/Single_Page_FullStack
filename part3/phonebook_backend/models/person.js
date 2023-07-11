@@ -1,48 +1,33 @@
-const mongoose = require('mongoose');
-
-mongoose.set('strictQuery', false);
-
-const url = process.env.MONGODB_URI;
-
-console.log('connecting....');
-
-mongoose
-  .connect(url)
-  .then(() => {
-    console.log('connected to MongoDB ✅');
-  })
-  .catch((error) => {
-    console.log('error connecting to MongoDB:', error.message);
-  });
+const mongoose = require('mongoose')
 
 const phonebookSchema = new mongoose.Schema({
-  name: {
-    type: String,
-    required: [true, 'Contact name is required'],
-    minLength: 3,
-  },
-  number: {
-    type: String,
-    minLength: 10,
-    validate: {
-      validator(value) {
-        return /^(09-\d{8}|\d{3}[-\s]?\d{3}[-\s]?\d{4}|\d{10})$/.test(
-          value,
-        );
-      },
-      message: (props) => `not a valid phone number ${props.value}`,
+    name: {
+        type: String,
+        required: [true, 'Contact name is required'],
+        minLength: 3,
     },
-    required: [true, 'User phone number required'],
-  },
-});
+    number: {
+        type: String,
+        minLength: 10,
+        validate: {
+            validator(value) {
+                return /^(09-\d{8}|\d{3}[-\s]?\d{3}[-\s]?\d{4}|\d{10})$/.test(
+                    value,
+                )
+            },
+            message: (props) => `not a valid phone number ${props.value}`,
+        },
+        required: [true, 'User phone number required'],
+    },
+})
 
 phonebookSchema.set('toJSON', {
-  transform: (document, returnedObject) => {
-    returnedObject.id = returnedObject._id.toString();
-    delete returnedObject._id;
-    delete returnedObject.__v;
-  },
-});
+    transform: (document, returnedObject) => {
+        returnedObject.id = returnedObject._id.toString()
+        delete returnedObject._id
+        delete returnedObject.__v
+    },
+})
 
 // Person.find({}).then((result) => {
 //   console.log("phonebook:");
@@ -60,6 +45,6 @@ phonebookSchema.set('toJSON', {
 // });
 // const person = new Person({ persons });
 
-const Person = mongoose.model('Person', phonebookSchema);
+const Person = mongoose.model('Person', phonebookSchema)
 
-module.exports = Person;
+module.exports = Person
