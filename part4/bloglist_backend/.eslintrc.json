@@ -1,0 +1,14 @@
+{
+  "env": {
+    "node": true,
+    "jest": true
+  },
+  "extends": ["airbnb"],
+  "plugins": ["react", "prettier"],
+  "rules": {
+    "no-multiple-empty-lines": ["error", { "max": 2, "maxEOF": 0 }],
+    "prettier/prettier": ["error"],
+    "no-console": "warn",
+    "operator-linebreak": "off"
+  }
+}
