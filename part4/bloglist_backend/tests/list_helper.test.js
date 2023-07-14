@@ -134,7 +134,6 @@ describe('favorite likes', () => {
       },
     ];
     const result = favoriteBlog(listWithOneBlog);
-    console.log(result);
     expect(result).toEqual({
       _id: '5a422a851b54a676234d17f7',
       title: 'React patterns',

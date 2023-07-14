@@ -9,6 +9,8 @@
     "no-multiple-empty-lines": ["error", { "max": 2, "maxEOF": 0 }],
     "prettier/prettier": ["error"],
     "no-console": "warn",
-    "operator-linebreak": "off"
+    "operator-linebreak": "off",
+    "no-underscore-dangle":"off",
+    "object-curly-newline":"off"
   }
 }
