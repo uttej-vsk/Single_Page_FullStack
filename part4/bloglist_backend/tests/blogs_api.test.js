@@ -119,6 +119,26 @@ describe('deletion of a blog', () => {
 
     expect(title).not.toContain(blogToDelete.title);
   });
+
+  test('Verifies to check if the likes is updated in the blog', async () => {
+    const blogsAtStart = await helper.blogsInDb();
+    const blogToBeUpdated = blogsAtStart[0];
+
+    const blogUpdate = {
+      likes: 200,
+    };
+
+    await api
+      .patch(`/api/blogs/${blogToBeUpdated.id}`)
+      .send(blogUpdate)
+      .expect(200);
+
+    const blogsAtEnd = await helper.blogsInDb();
+    const updatedBlogInDb = blogsAtEnd.find(
+      (blog) => blog.id === blogToBeUpdated.id,
+    );
+    expect(updatedBlogInDb.likes).toBe(blogUpdate.likes);
+  });
 });
 
 afterAll(async () => {

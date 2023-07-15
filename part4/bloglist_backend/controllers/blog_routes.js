@@ -40,7 +40,7 @@ blogRoutes.delete('/:id', async (request, response) => {
   response.status(204).end();
 });
 
-blogRoutes.put('/:id', async (request, response) => {
+blogRoutes.patch('/:id', async (request, response) => {
   const { id } = request.params;
   const { likes } = request.body;
 
@@ -54,7 +54,6 @@ blogRoutes.put('/:id', async (request, response) => {
     if (!updatedBlog) {
       response.status(404).json({ error: 'Blog not found' });
     }
-
     response.json(updatedBlog);
   } catch (error) {
     response.status(400).json({ error: 'Invalid request' });
