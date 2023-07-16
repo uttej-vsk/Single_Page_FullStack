@@ -8,13 +8,26 @@ const blogSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  author: String,
+  author: {
+    type: String,
+  },
   url: {
     type: String,
     required: true,
   },
-  likes: Number,
+  likes: {
+    type: Number,
+    default: 0, // Set the default value for likes property
+  },
+  user: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+    },
+  ],
 });
+
+// Rest of the code remains the same
 
 blogSchema.set('toJSON', {
   transform: (document, returnedObject) => {
