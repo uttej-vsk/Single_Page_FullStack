@@ -1,6 +1,15 @@
 const blogRoutes = require('express').Router();
+const jwt = require('jsonwebtoken');
 const Blog = require('../models/blog');
 const User = require('../models/user');
+
+const getTokenFrom = (request) => {
+  const authorization = request.get('authorization');
+  if (authorization && authorization.startsWith('bearer ')) {
+    return authorization.replace('bearer ', '');
+  }
+  return null;
+};
 
 blogRoutes.get('/', async (request, response, next) => {
   try {
@@ -18,13 +27,24 @@ blogRoutes.get('/', async (request, response, next) => {
 blogRoutes.post('/', async (request, response, next) => {
   try {
     const { body } = request;
-    const user = await User.findById(body.userId);
+
+    const decodedToken = jwt.verify(
+      getTokenFrom(request),
+      process.env.JWT_SECRET,
+    );
+    if (!decodedToken.id) {
+      return response
+        .status(401)
+        .json({ error: 'invalid credentials' });
+    }
+    console.log(decodedToken);
+
+    const user = await User.findById(decodedToken.id);
 
     if (!body.title || !body.url) {
-      response
+      return response
         .status(400)
         .json({ error: 'title and URL are required' });
-      return;
     }
 
     const blog = new Blog({
