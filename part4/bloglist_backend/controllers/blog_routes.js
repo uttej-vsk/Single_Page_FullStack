@@ -2,14 +2,7 @@ const blogRoutes = require('express').Router();
 const jwt = require('jsonwebtoken');
 const Blog = require('../models/blog');
 const User = require('../models/user');
-
-const getTokenFrom = (request) => {
-  const authorization = request.get('authorization');
-  if (authorization && authorization.startsWith('bearer ')) {
-    return authorization.replace('bearer ', '');
-  }
-  return null;
-};
+const tokenExtractor = require('../utils/middleware');
 
 blogRoutes.get('/', async (request, response, next) => {
   try {
@@ -24,46 +17,49 @@ blogRoutes.get('/', async (request, response, next) => {
   }
 });
 
-blogRoutes.post('/', async (request, response, next) => {
-  try {
-    const { body } = request;
+blogRoutes.post(
+  '/',
+  tokenExtractor,
+  async (request, response, next) => {
+    try {
+      const { body, token } = request;
 
-    const decodedToken = jwt.verify(
-      getTokenFrom(request),
-      process.env.JWT_SECRET,
-    );
-    if (!decodedToken.id) {
-      return response
-        .status(401)
-        .json({ error: 'invalid credentials' });
+      const decodedToken = jwt.verify(token, process.env.JWT_SECRET, {
+        expiresIn: 60 * 60,
+      });
+      if (!decodedToken.id) {
+        return response
+          .status(401)
+          .json({ error: 'invalid credentials' });
+      }
+      console.log(decodedToken);
+
+      const user = await User.findById(decodedToken.id);
+
+      if (!body.title || !body.url) {
+        return response
+          .status(400)
+          .json({ error: 'title and URL are required' });
+      }
+
+      const blog = new Blog({
+        title: body.title,
+        author: body.author,
+        url: body.url,
+        likes: body.likes || 0,
+        user: user.id,
+      });
+
+      const savedBlog = await blog.save();
+
+      user.blogs = user.blogs.concat(savedBlog._id);
+      await user.save();
+      return response.status(201).json(savedBlog);
+    } catch (error) {
+      return next(error);
     }
-    console.log(decodedToken);
-
-    const user = await User.findById(decodedToken.id);
-
-    if (!body.title || !body.url) {
-      return response
-        .status(400)
-        .json({ error: 'title and URL are required' });
-    }
-
-    const blog = new Blog({
-      title: body.title,
-      author: body.author,
-      url: body.url,
-      likes: body.likes || 0,
-      user: user.id,
-    });
-
-    const savedBlog = await blog.save();
-
-    user.blogs = user.blogs.concat(savedBlog._id);
-    await user.save();
-    response.status(201).json(savedBlog);
-  } catch (error) {
-    next(error);
-  }
-});
+  },
+);
 
 blogRoutes.delete('/:id', async (request, response) => {
   await Blog.findByIdAndRemove(request.params.id);
