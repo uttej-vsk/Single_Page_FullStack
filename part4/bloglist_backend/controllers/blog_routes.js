@@ -9,18 +9,22 @@ const {
   userExtractor,
 } = require('../utils/middleware');
 
-blogRoutes.get('/', async (request, response, next) => {
-  try {
-    const blogs = await Blog.find({}).populate('user', {
-      username: 1,
-      name: 1,
-    });
-
-    response.status(200).json(blogs);
-  } catch (error) {
-    next(error);
-  }
-});
+blogRoutes.get(
+  '/',
+  tokenExtractor,
+  userExtractor,
+  async (request, response, next) => {
+    try {
+      const blogs = await Blog.find({}).populate('user', {
+        username: 1,
+        name: 1,
+      });
+      response.status(200).json(blogs);
+    } catch (error) {
+      next(error);
+    }
+  },
+);
 
 blogRoutes.post(
   '/',
@@ -68,6 +72,7 @@ blogRoutes.post(
 blogRoutes.delete(
   '/:id',
   tokenExtractor,
+  userExtractor,
   async (request, response) => {
     try {
       const blogToBeDeleted = await Blog.findById(
