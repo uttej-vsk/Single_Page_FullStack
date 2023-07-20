@@ -2,31 +2,33 @@ const blogRoutes = require('express').Router();
 const jwt = require('jsonwebtoken');
 const Blog = require('../models/blog');
 const User = require('../models/user');
-const { tokenExtractor } = require('../utils/middleware');
+const logger = require('../utils/loggers');
 
-blogRoutes.get(
-  '/',
+const {
   tokenExtractor,
-  async (request, response, next) => {
-    try {
-      const blogs = await Blog.find({}).populate('user', {
-        username: 1,
-        name: 1,
-      });
+  userExtractor,
+} = require('../utils/middleware');
 
-      response.status(200).json(blogs);
-    } catch (error) {
-      next(error);
-    }
-  },
-);
+blogRoutes.get('/', async (request, response, next) => {
+  try {
+    const blogs = await Blog.find({}).populate('user', {
+      username: 1,
+      name: 1,
+    });
+
+    response.status(200).json(blogs);
+  } catch (error) {
+    next(error);
+  }
+});
 
 blogRoutes.post(
   '/',
   tokenExtractor,
+  userExtractor,
   async (request, response, next) => {
     try {
-      const { body, token } = request;
+      const { body, token, user } = request;
 
       const decodedToken = jwt.verify(token, process.env.JWT_SECRET, {
         expiresIn: 60 * 60,
@@ -34,9 +36,9 @@ blogRoutes.post(
       if (!decodedToken.id) {
         response.status(401).json({ error: 'invalid credentials' });
       }
-      console.log(decodedToken);
+      logger.info('from post', decodedToken);
 
-      const user = await User.findById(decodedToken.id);
+      // const user = await User.findById(decodedToken.id);
 
       if (!body.title || !body.url) {
         response

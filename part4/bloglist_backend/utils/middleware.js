@@ -1,6 +1,8 @@
+const jwt = require('jsonwebtoken');
+const User = require('../models/user');
 const logger = require('./loggers');
 
-const tokenExtractor = (request, response, next) => {
+const tokenExtractor = async (request, response, next) => {
   const authorization = request.get('authorization');
   if (authorization && authorization.startsWith('bearer ')) {
     const token = authorization.replace('bearer ', '');
@@ -8,6 +10,35 @@ const tokenExtractor = (request, response, next) => {
     next(); // Call the next middleware
   } else {
     response.status(401).json({ error: 'Unauthorized access' });
+  }
+};
+
+const userExtractor = async (request, response, next) => {
+  try {
+    const { token } = request;
+    if (!token) {
+      return response.status(401).json({ error: 'Token missing' });
+    }
+
+    const decodedToken = await jwt.verify(
+      token,
+      process.env.JWT_SECRET,
+    );
+    if (!decodedToken.id) {
+      return response.status(401).json({ error: 'Invalid token' });
+    }
+
+    const userId = decodedToken.id.toString();
+    const user = await User.findById(userId);
+    if (!user) {
+      return response.status(404).json({ error: 'User not found' });
+    }
+
+    request.user = user;
+    next();
+  } catch (error) {
+    logger.error('Error extracting user from token:', error.message);
+    return response.status(401).json({ error: 'Invalid token' });
   }
 };
 
@@ -46,6 +77,7 @@ const errorHandler = (error, request, response, next) => {
 };
 
 module.exports = {
+  userExtractor,
   tokenExtractor,
   requestLogger,
   unknownEndpoint,
