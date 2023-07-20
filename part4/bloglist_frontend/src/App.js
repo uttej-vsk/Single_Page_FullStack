@@ -5,25 +5,41 @@ import loginService from "./services/login";
 
 const App = () => {
   const [blogs, setBlogs] = useState([]);
-  const [username, setUserName] = useState();
-  const [password, setPassword] = useState();
+  const [username, setUserName] = useState("");
+  const [password, setPassword] = useState("");
   const [user, setUser] = useState(null);
 
   useEffect(() => {
-    blogService.getAll().then((blogs) => setBlogs(blogs));
+    const loggedUserJson = window.localStorage.getItem(
+      "loggedInBlogUser"
+    );
+    if (loggedUserJson) {
+      const user = JSON.parse(loggedUserJson);
+      setUser(user);
+      blogService.setToken(user.token);
+    }
   }, []);
+
+  useEffect(() => {
+    if (user) {
+      blogService.getAll().then((blogs) => setBlogs(blogs));
+    }
+  }, [user]);
 
   const handleLogin = async (event) => {
     event.preventDefault();
     try {
       const user = await loginService.login({ username, password });
+      window.localStorage.setItem(
+        "loggedInBlogUser",
+        JSON.stringify(user)
+      );
       setUser(user);
       setUserName("");
       setPassword("");
     } catch (exception) {
       console.log("invalid credentials");
     }
-    console.log("logged in with", username, password);
   };
 
   const loginForm = () => (
@@ -40,7 +56,7 @@ const App = () => {
       <div>
         Password {""}
         <input
-          type='text'
+          type='password'
           value={password}
           name='Password'
           onChange={({ target }) => setPassword(target.value)}
@@ -52,14 +68,17 @@ const App = () => {
 
   return (
     <div>
-      <h2>blogs</h2>
+      <h2>Welcome to Blogging Site</h2>
 
-      <h3>
-        {blogs.map((blog) => (
-          <Blog key={blog.id} blog={blog} />
-        ))}
-      </h3>
       {user === null && loginForm()}
+      {user !== null && (
+        <div>
+          <h3>Blogs</h3>
+          {blogs.map((blog) => (
+            <Blog key={blog.id} blog={blog} />
+          ))}
+        </div>
+      )}
     </div>
   );
 };
