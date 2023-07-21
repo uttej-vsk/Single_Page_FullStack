@@ -3,16 +3,18 @@ import Blog from "./components/Blog";
 import blogService from "./services/blogs";
 import loginService from "./services/login";
 import jwt_decode from "jwt-decode";
+import LoginForm from "./components/loginForm";
+import AddBlog from "./components/AddBlog";
 
 const App = () => {
   const [blogs, setBlogs] = useState([]);
+  const [user, setUser] = useState(null);
   const [username, setUserName] = useState("");
   const [password, setPassword] = useState("");
-  const [user, setUser] = useState(null);
   const [newTitle, setNewTitle] = useState("");
   const [newAuthor, setNewAuthor] = useState("");
   const [newUrl, setNewUrl] = useState("");
-  const [newLikes, setNewLikes] = useState();
+  const [newLikes, setNewLikes] = useState("");
 
   useEffect(() => {
     const loggedUserJson = window.localStorage.getItem(
@@ -85,30 +87,6 @@ const App = () => {
     }
   };
 
-  const loginForm = () => (
-    <form onSubmit={handleLogin}>
-      <div>
-        username{" "}
-        <input
-          type='text'
-          value={username}
-          name='Username'
-          onChange={({ target }) => setUserName(target.value)}
-        />
-      </div>
-      <div>
-        Password {""}
-        <input
-          type='password'
-          value={password}
-          name='Password'
-          onChange={({ target }) => setPassword(target.value)}
-        />
-      </div>
-      <button type='submit'>Submit</button>
-    </form>
-  );
-
   const handleAddBlog = async (event) => {
     event.preventDefault();
     try {
@@ -116,8 +94,8 @@ const App = () => {
         title: newTitle,
         author: newAuthor,
         url: newUrl,
-        likes: newLikes,
-        user: JSON.parse(window.localStorage.getItem("userId")),
+        likes: parseInt(newLikes),
+        userId: JSON.parse(window.localStorage.getItem("userId")),
       };
 
       // Send the newBlog data to the backend to create the blog
@@ -137,49 +115,6 @@ const App = () => {
     } catch (error) {
       console.log("Error adding blog:", error.message);
     }
-  };
-
-  const addBlog = () => {
-    return (
-      <form onSubmit={handleAddBlog}>
-        <div>
-          Title{" "}
-          <input
-            type='text'
-            name='title'
-            value={newTitle}
-            onChange={(e) => setNewTitle(e.target.value)}
-          />
-        </div>
-        <div>
-          Author{" "}
-          <input
-            type='text'
-            name='author'
-            value={newAuthor}
-            onChange={(e) => setNewAuthor(e.target.value)}
-          />
-        </div>
-        <div>
-          URL{" "}
-          <textarea
-            name='url'
-            value={newUrl}
-            onChange={(e) => setNewUrl(e.target.value)}
-          />
-        </div>
-        <div>
-          likes{" "}
-          <textarea
-            name='likes'
-            value={newLikes}
-            onChange={(e) => setNewLikes(e.target.value)}
-          />
-        </div>
-
-        <button type='submit'>Add Blog</button>
-      </form>
-    );
   };
 
   const handleLogout = async (event) => {
@@ -206,18 +141,30 @@ const App = () => {
     <div>
       <h2>Welcome to Blogging Site</h2>
 
-      {user === null && loginForm()}
-      {user !== null && existingUser()}
-      {user !== null && (
-        <div>
-          <h3>Blogs</h3>
-          {blogs.map((blog) => (
-            <Blog key={blog.id} blog={blog} />
-          ))}
-
-          <h1>Add a new blog</h1>
-          {user !== null && addBlog()}
-        </div>
+      {user === null ? (
+        <LoginForm
+          onLogin={handleLogin}
+          username={username}
+          password={password}
+          setUserName={setUserName}
+          setPassword={setPassword}
+        />
+      ) : (
+        <>
+          {existingUser()}
+          <Blog blogs={blogs} />
+          <AddBlog
+            onAddBlog={handleAddBlog}
+            newTitle={newTitle}
+            newAuthor={newAuthor}
+            newUrl={newUrl}
+            newLikes={newLikes}
+            setNewTitle={setNewTitle}
+            setNewAuthor={setNewAuthor}
+            setNewUrl={setNewUrl}
+            setNewLikes={setNewLikes}
+          />
+        </>
       )}
     </div>
   );
