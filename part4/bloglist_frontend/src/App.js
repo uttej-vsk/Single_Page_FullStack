@@ -5,6 +5,8 @@ import loginService from "./services/login";
 import jwt_decode from "jwt-decode";
 import LoginForm from "./components/loginForm";
 import AddBlog from "./components/AddBlog";
+import SuccessAlert from "./components/SuccessAlert";
+import ErrorAlert from "./components/ErrorAlert";
 
 const App = () => {
   const [blogs, setBlogs] = useState([]);
@@ -15,6 +17,9 @@ const App = () => {
   const [newAuthor, setNewAuthor] = useState("");
   const [newUrl, setNewUrl] = useState("");
   const [newLikes, setNewLikes] = useState("");
+  const [successNotification, setSuccessNotification] =
+    useState(false);
+  const [errorNotification, setErrorNotification] = useState(false);
 
   useEffect(() => {
     const loggedUserJson = window.localStorage.getItem(
@@ -82,8 +87,13 @@ const App = () => {
       setUser(user);
       setUserName("");
       setPassword("");
+      setErrorNotification(false);
     } catch (exception) {
       console.log("invalid credentials");
+      setErrorNotification(true);
+      setTimeout(() => {
+        setErrorNotification(false);
+      }, 3000);
     }
   };
 
@@ -112,6 +122,11 @@ const App = () => {
       setNewAuthor("");
       setNewUrl("");
       setNewLikes(0);
+
+      setSuccessNotification(true);
+      setTimeout(() => {
+        setSuccessNotification((prevState) => !prevState);
+      }, 3000);
     } catch (error) {
       console.log("Error adding blog:", error.message);
     }
@@ -142,17 +157,25 @@ const App = () => {
       <h2>Welcome to Blogging Site</h2>
 
       {user === null ? (
-        <LoginForm
-          onLogin={handleLogin}
-          username={username}
-          password={password}
-          setUserName={setUserName}
-          setPassword={setPassword}
-        />
+        <>
+          <ErrorAlert errorNotification={errorNotification} />
+          <LoginForm
+            onLogin={handleLogin}
+            username={username}
+            password={password}
+            setUserName={setUserName}
+            setPassword={setPassword}
+          />
+        </>
       ) : (
         <>
           {existingUser()}
+          <SuccessAlert
+            successNotification={successNotification}
+            blogs={blogs}
+          />
           <Blog blogs={blogs} />
+
           <AddBlog
             onAddBlog={handleAddBlog}
             newTitle={newTitle}
