@@ -40,17 +40,18 @@ const App = () => {
     }
   }, []);
 
+  const fetchBlogs = async () => {
+    try {
+      const blogs = await blogService.getAll();
+      console.log("Fetched blogs:", blogs);
+      setBlogs(blogs);
+    } catch (error) {
+      console.log("Error fetching blogs:", error.message);
+    }
+  };
+
   useEffect(() => {
     console.log("useEffect triggered with user:", user);
-    const fetchBlogs = async () => {
-      try {
-        const blogs = await blogService.getAll();
-        console.log("Fetched blogs:", blogs);
-        setBlogs(blogs);
-      } catch (error) {
-        console.log("Error fetching blogs:", error.message);
-      }
-    };
 
     if (user && user.token) {
       const currentTime = Math.floor(Date.now() / 1000);
