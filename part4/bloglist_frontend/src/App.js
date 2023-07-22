@@ -7,6 +7,7 @@ import LoginForm from "./components/LoginForm";
 import AddBlog from "./components/AddBlog";
 import SuccessAlert from "./components/SuccessAlert";
 import ErrorAlert from "./components/ErrorAlert";
+import ToggleForm from "./components/ToggleForm";
 
 const App = () => {
   const [blogs, setBlogs] = useState([]);
@@ -20,7 +21,6 @@ const App = () => {
   const [successNotification, setSuccessNotification] =
     useState(false);
   const [errorNotification, setErrorNotification] = useState(false);
-  const [loginFormVisible, setLoginFormVisible] = useState(false);
 
   useEffect(() => {
     const loggedUserJson = window.localStorage.getItem(
@@ -153,10 +153,6 @@ const App = () => {
     );
   };
 
-  const toggleShowLoginOptions = () => {
-    setLoginFormVisible((prevState) => !prevState);
-  };
-
   return (
     <div>
       <h2>Welcome to Book Store</h2>
@@ -165,16 +161,7 @@ const App = () => {
         <>
           <ErrorAlert errorNotification={errorNotification} />
 
-          <div
-            style={{ display: loginFormVisible ? "none" : "block" }}
-          >
-            <h4>Continue with Login</h4>
-            <button onClick={toggleShowLoginOptions}>Log In </button>
-          </div>
-
-          <div
-            style={{ display: loginFormVisible ? "block" : "none" }}
-          >
+          <ToggleForm buttonLabel='Login'>
             <LoginForm
               onLogin={handleLogin}
               username={username}
@@ -186,8 +173,7 @@ const App = () => {
                 setPassword(target.value)
               }
             />
-            <button onClick={toggleShowLoginOptions}>Cancel</button>
-          </div>
+          </ToggleForm>
         </>
       ) : (
         <>
