@@ -1,15 +1,14 @@
-const LoginForm = ({ ...props }) => {
-  const { onLogin, username, password, setPassword, setUserName } =
-    props;
+const LoginForm = (props) => {
   return (
-    <form onSubmit={onLogin}>
+    <form onSubmit={props.onLogin}>
       <div>
         username{" "}
         <input
           type='text'
-          value={username}
-          name='Username'
-          onChange={({ target }) => setUserName(target.value)}
+          value={props.username}
+          name='username'
+          autoComplete='username'
+          onChange={props.handleUserNameChange}
         />
       </div>
 
@@ -17,9 +16,10 @@ const LoginForm = ({ ...props }) => {
         Password {""}
         <input
           type='password'
-          value={password}
-          name='Password'
-          onChange={({ target }) => setPassword(target.value)}
+          value={props.password}
+          name='password'
+          autoComplete='current-password'
+          onChange={props.handlePasswordChange}
         />
       </div>
 

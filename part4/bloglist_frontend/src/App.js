@@ -3,7 +3,7 @@ import Blog from "./components/Blog";
 import blogService from "./services/blogs";
 import loginService from "./services/login";
 import jwt_decode from "jwt-decode";
-import LoginForm from "./components/loginForm";
+import LoginForm from "./components/LoginForm";
 import AddBlog from "./components/AddBlog";
 import SuccessAlert from "./components/SuccessAlert";
 import ErrorAlert from "./components/ErrorAlert";
@@ -20,6 +20,7 @@ const App = () => {
   const [successNotification, setSuccessNotification] =
     useState(false);
   const [errorNotification, setErrorNotification] = useState(false);
+  const [loginFormVisible, setLoginFormVisible] = useState(false);
 
   useEffect(() => {
     const loggedUserJson = window.localStorage.getItem(
@@ -152,20 +153,41 @@ const App = () => {
     );
   };
 
+  const toggleShowLoginOptions = () => {
+    setLoginFormVisible((prevState) => !prevState);
+  };
+
   return (
     <div>
-      <h2>Welcome to Blogging Site</h2>
+      <h2>Welcome to Book Store</h2>
 
       {user === null ? (
         <>
           <ErrorAlert errorNotification={errorNotification} />
-          <LoginForm
-            onLogin={handleLogin}
-            username={username}
-            password={password}
-            setUserName={setUserName}
-            setPassword={setPassword}
-          />
+
+          <div
+            style={{ display: loginFormVisible ? "none" : "block" }}
+          >
+            <h4>Continue with Login</h4>
+            <button onClick={toggleShowLoginOptions}>Log In </button>
+          </div>
+
+          <div
+            style={{ display: loginFormVisible ? "block" : "none" }}
+          >
+            <LoginForm
+              onLogin={handleLogin}
+              username={username}
+              password={password}
+              handleUserNameChange={({ target }) =>
+                setUserName(target.value)
+              }
+              handlePasswordChange={({ target }) =>
+                setPassword(target.value)
+              }
+            />
+            <button onClick={toggleShowLoginOptions}>Cancel</button>
+          </div>
         </>
       ) : (
         <>
